@@ -1,5 +1,5 @@
 // Initialisation du local storage
-let openedCart = JSON.parse(localStorage.getItem("storedCart"));
+let productsInLocalStorage = JSON.parse(localStorage.getItem("storedCart"));
 const foundItem = document.getElementById("cart__items");
 
 cart();
@@ -12,9 +12,9 @@ function cart() {
 // Affichage des produits
 function displayCart() {
 
-  if (openedCart.length >= 1) {
+  if (productsInLocalStorage.length >= 1) {
 
-    for (let product of openedCart) {
+    for (let product of productsInLocalStorage) {
 
       //Insertion de l'élément "article"
       let productArticle = document.createElement("article");
@@ -92,11 +92,11 @@ function deleteCart() {
     let target = event.target;
     let targetId = (target.closest('.cart__item')).getAttribute('data-id');
     let targetColor = (target.closest('.cart__item')).getAttribute('data-color');
-    let productInCart = openedCart.findIndex(f => f._id === targetId && f.colors === targetColor);
-    openedCart.splice(productInCart, 1);
+    let productInCart = productsInLocalStorage.findIndex(f => f._id === targetId && f.colors === targetColor);
+    productsInLocalStorage.splice(productInCart, 1);
 
     // Remplacement du localstorage avec les nouvelles valeurs
-    localStorage.setItem("storedCart", JSON.stringify(openedCart));
+    localStorage.setItem("storedCart", JSON.stringify(productsInLocalStorage));
     cart();
 
     // Alerte de la mise à jour du panier
@@ -116,15 +116,15 @@ function modifyQtt() {
           event.preventDefault();
 
           //Selection de l'element à modifier en fonction de son id ET sa couleur
-          let quantityModif = openedCart[k].productQty;
+          let quantityModif = productsInLocalStorage[k].productQty;
           let qttModifValue = qtyChange[k].valueAsNumber;
           
-          const resultFind = openedCart.find((el) => el.qttModifValue !== quantityModif);
+          const resultFind = productsInLocalStorage.find((el) => el.qttModifValue !== quantityModif);
 
           resultFind.productQty = qttModifValue;
-          openedCart[k].productQty = resultFind.productQty;
+          productsInLocalStorage[k].productQty = resultFind.productQty;
 
-          localStorage.setItem("storedCart", JSON.stringify(openedCart));
+          localStorage.setItem("storedCart", JSON.stringify(productsInLocalStorage));
       
           // Refresh rapide
           location.reload();
@@ -136,11 +136,27 @@ function modifyQtt() {
 }
 modifyQtt();
 
+  /* Total des prix */
+function totalPrice() {
+  const articleQuantity = document.getElementById("totalQuantity");
+  const cartTotalPrice = document.getElementById("totalPrice");
+  let productTotalQuantity = 0;
+  let totalPriceProduct = 0;
+  for (storedCart of productsInLocalStorage) {
+    productTotalQuantity = parseInt(productTotalQuantity) + parseInt(storedCart.quantity);
+    totalPriceProduct = totalPriceProduct + storedCart.quantity * storedCart.price;
+  }
+  articleQuantity.innerText = productTotalQuantity;
+  cartTotalPrice.innerText = totalPriceProduct;
+}
+totalPrice();
+
+
 
 //-------- PARTIE FORMULAIRE
 
 
-/*Nom et Prénom */
+// Nom et Prénom
 const form = document.getElementsByClassName("cart__order__form")[0];
 
 form.firstName.addEventListener("change", function () {
@@ -164,7 +180,7 @@ const validName = function (inputName) {
   }
 };
 
-/*Adresse */
+// Adresse
 form.address.addEventListener("change", function () {
   validAddress(this);
 });
@@ -183,7 +199,7 @@ const validAddress = function (inputAdress) {
   }
 };
 
-/*Ville*/
+// Ville
 form.city.addEventListener("change", function () {
   validCity(this);
 });
@@ -202,7 +218,7 @@ const validCity = function (inputCity) {
   }
 };
 
-/*Email*/
+// Email
 form.email.addEventListener("change", function () {
   validEmail(this);
 });
@@ -221,8 +237,57 @@ const validEmail = function (inputEmail) {
   }
 };
 
-//Envoi du formulaire
-//const sendOrderToBackEnd = (theOrder) => {
-//fetch("http://localhost:3000/api/products/order", {
-//method: "POST",
-// body: JSON.stringify(theOrder),
+// Envoi du formulaire 
+let orderBtn = document.querySelector('#order');
+orderBtn.addEventListener('click', (e) => {
+  if (
+    validName(form.firstName) &&
+    validName(form.lastName) &&
+    validAddress(form.address) &&
+    validCity(form.city) &&
+    validEmail(form.email)
+  ) {
+    pushOrder();
+  } else {
+    e.preventDefault();
+    alert("Veuillez remplir le formulaire avec des informations valides.");
+  }
+});
+
+const sendOrderToServer = (Order) => {
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(Order),
+    headers: { "Content-type": "application/JSON" },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      localStorage.setItem("orderId", data.orderId);
+
+      //Envoi de l'utilisateur vers la page de confirmation
+      window.location.href = "confirmation.html" + "?" + "name" + "=" + data.orderId;
+    });
+};
+
+function pushOrder() {
+  const products = [];
+  for (product of productsInLocalStorage) {
+    let productId = product._id;
+    products.push(productId);
+  }
+  const contact = {
+    firstName: form.firstName.value,
+    lastName: form.lastName.value,
+    address: form.address.value,
+    city: form.city.value,
+    email: form.email.value,
+  };
+
+// Déclaration d'une variable contenant les infos de la commande
+  let Order = {
+    contact,
+    products,
+  };
+  //localStorage.setItem("products", JSON.stringify(Order))
+  sendOrderToServer(Order);
+}
