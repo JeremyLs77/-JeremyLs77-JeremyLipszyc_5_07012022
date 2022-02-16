@@ -69,7 +69,7 @@ function displayCart() {
   }
 
   function getTotal() {
-    // Total des quantités
+    // Affichage des quantités et somme totale de la commande
     var articleQuantity = document.getElementsByClassName("itemQuantity");
     var articleLength = articleQuantity.length,
       totalQuantity = 0;
@@ -81,6 +81,26 @@ function displayCart() {
     let productTotalQuantity = document.getElementById("totalQuantity");
     productTotalQuantity.innerHTML = totalQuantity;
     console.log(totalQuantity);
+
+    const priceArray = [];
+    let price = 0;
+
+    for (let amount = 0; amount < articleQuantity.length; amount++) {
+      let articlePrice = productsInLocalStorage[amount].price;
+      console.log(articlePrice);
+      let uniqueQuantity = productsInLocalStorage[amount].productQty;
+      console.log(uniqueQuantity)
+
+      price = articlePrice * uniqueQuantity;
+      priceArray.push(price);
+    }
+
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+    let articlePrice = priceArray.reduce(reducer,0);
+
+    const totalPrice = document.getElementById("totalPrice");
+    totalPrice.innerHTML = articlePrice;
   }
   getTotal();
   
@@ -115,7 +135,7 @@ function modifyQtt() {
       qtyChange[k].addEventListener("change" , (event) => {
           event.preventDefault();
 
-          //Selection de l'element à modifier en fonction de son id ET sa couleur
+          //Selection de l'élement à modifier en fonction de son id / couleur
           let quantityModif = productsInLocalStorage[k].productQty;
           let qttModifValue = qtyChange[k].valueAsNumber;
           
@@ -136,22 +156,6 @@ function modifyQtt() {
 }
 modifyQtt();
 
-  /* Total des prix */
-function totalPrice() {
-  const articleQuantity = document.getElementById("totalQuantity");
-  const cartTotalPrice = document.getElementById("totalPrice");
-  let productTotalQuantity = 0;
-  let totalPriceProduct = 0;
-  for (storedCart of productsInLocalStorage) {
-    productTotalQuantity = parseInt(productTotalQuantity) + parseInt(storedCart.quantity);
-    totalPriceProduct = totalPriceProduct + storedCart.quantity * storedCart.price;
-  }
-  articleQuantity.innerText = productTotalQuantity;
-  cartTotalPrice.innerText = totalPriceProduct;
-}
-totalPrice();
-
-
 
 //-------- PARTIE FORMULAIRE
 
@@ -170,11 +174,11 @@ const validName = function (inputName) {
   let nameRegExp = new RegExp("^[^- ][a-zA-Z '-àâäéèêëïîôöùûü]*[^- ]$", "g");
   let testName = nameRegExp.test(inputName.value);
   if (testName) {
-    inputName.nextElementSibling.innerHTML = "Validé";
+    inputName.nextElementSibling.innerHTML = "Champ Valide";
     inputName.nextElementSibling.style.color = "green";
     return true;
   } else {
-    inputName.nextElementSibling.innerHTML = "Saisissez votre prénom ou votre nom";
+    inputName.nextElementSibling.innerHTML = "Champ invalide";
     inputName.nextElementSibling.style.color = "red";
     return false;
   }
@@ -189,11 +193,11 @@ const validAddress = function (inputAdress) {
   let addressRegExp = new RegExp("^[0-9]{1,4} [^- ][a-zA-Z '-àâäéèêëïîôöùûü]*[^- ]$", "g");
   let testAdress = addressRegExp.test(inputAdress.value);
   if (testAdress) {
-    inputAdress.nextElementSibling.innerHTML = "Validé";
+    inputAdress.nextElementSibling.innerHTML = "Champ valide";
     inputAdress.nextElementSibling.style.color = "green";
     return true;
   } else {
-    inputAdress.nextElementSibling.innerHTML = "Saisissez votre adresse";
+    inputAdress.nextElementSibling.innerHTML = "Champ invalide";
     inputAdress.nextElementSibling.style.color = "red";
     return false;
   }
@@ -208,11 +212,11 @@ const validCity = function (inputCity) {
   let cityRegExp = new RegExp("^[^- ][a-zA-Z '-àâäéèêëïîôöùûü]*[^- ]$", "g");
   let testCity = cityRegExp.test(inputCity.value);
   if (testCity) {
-    inputCity.nextElementSibling.innerHTML = "Validé";
+    inputCity.nextElementSibling.innerHTML = "Champ valide";
     inputCity.nextElementSibling.style.color = "green";
     return true;
   } else {
-    inputCity.nextElementSibling.innerHTML = "Saisissez votre ville";
+    inputCity.nextElementSibling.innerHTML = "Champ invalide";
     inputCity.nextElementSibling.style.color = "red";
     return false;
   }
@@ -227,11 +231,11 @@ const validEmail = function (inputEmail) {
   let emailRegExp = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$","g");
   let testEmail = emailRegExp.test(inputEmail.value);
   if (testEmail) {
-    inputEmail.nextElementSibling.innerHTML = "Validé";
+    inputEmail.nextElementSibling.innerHTML = "Champ valide";
     inputEmail.nextElementSibling.style.color = "green";
     return true;
   } else {
-    inputEmail.nextElementSibling.innerHTML ="Saisissez votre adresse mail complète";
+    inputEmail.nextElementSibling.innerHTML ="Champ invalide";
     inputEmail.nextElementSibling.style.color = "red";
     return false;
   }

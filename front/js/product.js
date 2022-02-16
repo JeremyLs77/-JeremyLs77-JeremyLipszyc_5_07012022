@@ -58,6 +58,7 @@ addToCartBtn.addEventListener("click", function () {
         //Vérification si un panier existe deja, sinon création du panier et de l'objet contenu
         if (localStorage.getItem("storedCart") === null) {
             addItem();
+            alert('Le produit a bien été ajouté au panier');
         } else {
             //Récupération du panier existant
             try {
@@ -79,7 +80,6 @@ addToCartBtn.addEventListener("click", function () {
             }
 
         }
-
         
     }
 });
