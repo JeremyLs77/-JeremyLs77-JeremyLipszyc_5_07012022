@@ -23,7 +23,7 @@ function getProduct() {
         // Modification du DOM avec les données de l'API
         .then(function (pickedProduct) {
 
-            // Insertion de l'image
+            // Insertion des éléments
             let productImg = document.createElement("img");
 
             let couchColors = pickedProduct.colors;
