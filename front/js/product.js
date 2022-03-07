@@ -1,4 +1,6 @@
-const id = document.URL.split("=").pop();
+let currentUrl = window.location.href;
+let url = new URL(currentUrl);
+let id = url.searchParams.get("id");
 const addToCartBtn = document.getElementById('addToCart');
 let productName = document.getElementById('title');
 let productDesc = document.getElementById('description');
@@ -80,7 +82,10 @@ addToCartBtn.addEventListener("click", function () {
             }
 
         }
-        
+
+    } else {
+    alert('Veuillez sélectionner une couleur et/ou quantité.');
+    
     }
 });
 

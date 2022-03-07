@@ -265,6 +265,7 @@ const validEmail = function (inputEmail) {
 // Envoi du formulaire 
 let orderBtn = document.querySelector('#order');
 orderBtn.addEventListener('click', (e) => {
+if (productsInLocalStorage.length >= 1) {
   if (
     validName(form.firstName) &&
     validName(form.lastName) &&
@@ -277,6 +278,10 @@ orderBtn.addEventListener('click', (e) => {
     e.preventDefault();
     alert("Veuillez remplir le formulaire avec des informations valides.");
   }
+} else {
+  e.preventDefault();
+  alert("Veuillez ajouter un ou plusieurs produits au panier pour pouvoir valider une commande.");
+};
 });
 
 const sendOrderToServer = (Order) => {
@@ -288,6 +293,7 @@ const sendOrderToServer = (Order) => {
     .then((response) => response.json())
     .then((data) => {
       localStorage.setItem("orderId", data.orderId);
+    console.log (data.orderid);
 
       //Redirection vers la page de confirmation
       window.location.href = "confirmation.html" + "?" + "name" + "=" + data.orderId;
