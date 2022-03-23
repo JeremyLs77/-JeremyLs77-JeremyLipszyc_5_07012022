@@ -1,11 +1,11 @@
-// Récuperation du numéro de commande via l'url
-const urlConfirmation = new URL(window.location.href);
+// Récupération de l'order id
+const orderId = document.getElementById('orderId');
 
-const getOrderId = () => {
-  const getConfirmedOrderId = urlConfirmation.searchParams.get("name");
-  document.getElementById("orderId").innerHTML = getConfirmedOrderId;
-};
-getOrderId();
+confirmedOrder = () => {
+    // Affichage du numéro de commande et suppression du local storage
+    orderId.innerHTML = localStorage.getItem('orderId');
+    localStorage.clear(); 
+}
 
-// Suppression du local storage par mesure de sécurité
-localStorage.clear();
+confirmedOrder();
+

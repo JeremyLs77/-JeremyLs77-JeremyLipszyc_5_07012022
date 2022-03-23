@@ -101,7 +101,6 @@ function addItem() {
         name: productName.innerHTML,
         colors: pickedColor,
         productQty: productQty,
-        price: productPrice.innerHTML,
         imageUrl: productImg.src,
         description: productDesc.innerHTML,
         altTxt: productImg.alt,
