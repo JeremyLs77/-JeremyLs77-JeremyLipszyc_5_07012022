@@ -96,28 +96,25 @@ function displayCart() {
     const priceArray = [];
     let price = 0;
 
+    let priceTotal = 0;
+
     // Récupération du prix
     for (let product of productsInLocalStorage) {
     fetch("http://localhost:3000/api/products" + "/" + product._id)
     .then(response => response.json())
     .then(data => {
       console.log(data.price);
-    
-    for (let amount = 0; amount < articleQuantity.length; amount++) {
-      let articlePrice = data.price;
-      let uniqueQuantity = productsInLocalStorage[amount].productQty;
 
-      price = articlePrice * uniqueQuantity;
-      priceArray.push(price);
-    }
+    let articlePrice = data.price;
+    let uniqueQuantity = product.productQty;
 
-    // La fonction reduce() garde en mémoire les résultats de l'opération à chaque calcul en cumulant la somme précédente
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
-
-    let articlePrice = priceArray.reduce(reducer,0);
+    price = articlePrice * uniqueQuantity;
+    priceTotal += price;
+    console.log("totaux"+price+"//"+priceTotal);
+    priceArray.push(price);
 
     const totalPrice = document.getElementById("totalPrice");
-    totalPrice.innerHTML = articlePrice;
+    totalPrice.innerHTML = priceTotal;
   })
   }
 }
@@ -268,7 +265,6 @@ form = () => {
       ) {
         // Envoi des informations dans le local storage
         // localStorage.setItem('contact', JSON.stringify(contact)); // données utilisateur
-        // Méthode booléan
         return true;
 
       } else {
